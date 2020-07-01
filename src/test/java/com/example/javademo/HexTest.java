@@ -12,7 +12,7 @@ import java.io.UnsupportedEncodingException;
  * @author wh
  * @date 2020/6/30
  * Description: Hex类的用法
- * 使用Apache的Hex类实现Hex(16进制字符串和)和字节数组的互转
+ * 使用Apache的Hex类实现Hex(16进制字符串和)和字节数组的互转，导入commons-codec依赖
  */
 @SpringBootTest
 @Slf4j
