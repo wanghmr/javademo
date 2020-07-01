@@ -2,9 +2,7 @@ package com.example.javademo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.Arrays;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**

@@ -5,6 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author wh
+ * @date 2020/7/1
+ * Description: 程序入口
  */
 @SpringBootApplication
 public class Application {
