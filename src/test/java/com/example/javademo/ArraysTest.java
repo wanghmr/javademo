@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * @author wh
  * @date 2020/7/1
- * Description: Arrays类的用法
+ * Description: Arrays类的用法--Arrays.copyOfRange
  */
 @SpringBootTest
 public class ArraysTest {
