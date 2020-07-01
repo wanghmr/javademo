@@ -1,0 +1,44 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+spring:
+  thymeleaf:
+    cache: false
+  datasource:
+    ##引用自己的mysql
+    url: jdbc:mysql://localhost:3306/xw?serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    tomcat:
+      default-auto-commit: true
+      init-sql: select 1 from dual
+      max-active: 128
+      max-idle: 10
+      max-wait: 5000
+      #连接池空闲连接的有效时间:毫秒
+      min-evictable-idle-time-millis: 1800000
+      #空闲连接回收的时间间隔，与test-while-idle一起使用:毫秒
+      time-between-eviction-runs-millis: 900000
+      #SQL 查询验证超时时间（秒），小于或等于 0 的数值表示禁用
+      validation-query-timeout: 2
+      #定时检查连接有效性时间间隔：毫秒
+      validation-interval: 120000
+      #从连接池拿连接的时候会进行有效性测试,相关参数：validationInterval, validationQuery
+      test-on-borrow: true
+      #指定获取连接时连接校验的sql查询语句.
+      validation-query: select 1 from dual
+      #后台有个线程会扫描连接池里没有正在使用的连接，然后如果上次检测时间到现在超过了validationInterval则对其进行检测。
+      test-while-idle: true
+  jpa:
+    hibernate:
+      ##validate  加载hibernate时，验证创建数据库表结构
+      ##create   每次加载hibernate，重新创建数据库表结构，这就是导致数据库表数据丢失的原因。
+      ##create-drop        加载hibernate时创建，退出是删除表结构
+      ##update                 加载hibernate自动更新数据库结构
+      ##validate 启动时验证表的结构，不会创建表
+      ##none  启动时不做任何操作
+      ddl-auto: update
+    show-sql: true
+    open-in-view: true
