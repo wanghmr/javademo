@@ -1,5 +1,8 @@
 package com.example.javademo;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -26,5 +29,14 @@ class SystemTest {
         for (User user : users) {
             System.out.println(user);
         }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    class User {
+        private Integer id;
+        private String username;
+        private String email;
     }
 }
