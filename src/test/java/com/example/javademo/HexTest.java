@@ -6,7 +6,8 @@ import org.apache.commons.codec.binary.Hex;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 /**
  * @author wh
@@ -16,7 +17,7 @@ import java.io.UnsupportedEncodingException;
  */
 @SpringBootTest
 @Slf4j
-public class HexTest {
+class HexTest {
     @Test
     void hexTest() {
         String str = "f2345678909866555";
@@ -28,14 +29,7 @@ public class HexTest {
             //十六进制字符串（Hex）转字节数字（byte[]）
             byte[] decodeHex = Hex.decodeHex(substring);
             //[B@5e9bbd9d
-            System.out.println("decodeHex(Hex.decodeHex):" + decodeHex);
-            StringBuffer sb = new StringBuffer();
-            for (byte b : decodeHex) {
-                sb.append(b + ",");
-            }
-            //18,52,86,120,-112,
-            System.out.print("decodeHex的遍历值：" + sb);
-            System.out.println();
+            System.out.println("decodeHex(Hex.decodeHex):" + Arrays.toString(decodeHex));
 
             //字节数组（byte[]）转为十六进制（Hex）字符串
             String encodeHexString = Hex.encodeHexString(decodeHex);
@@ -46,22 +40,28 @@ public class HexTest {
     }
 
     @Test
-    void hexTest02() throws UnsupportedEncodingException, DecoderException {
+    void hexTest02() {
         String str = "test";
-        /**编码*/
+        //编码
         //第一种方式：直接一步到位
-        String hexString = Hex.encodeHexString(str.getBytes("UTF-8"));
+        String hexString = Hex.encodeHexString(str.getBytes(StandardCharsets.UTF_8));
         System.out.println(hexString);
         //第二种方式：先转换成char数组，第二个参数意思是是否全部转换成小写
         char[] encodeHex = Hex.encodeHex(str.getBytes(), true);
         System.out.println(new String(encodeHex));
-        /**解码*/
+
+        //解码
         //第一种方式：入的是cha字符串类型的，该方法要求传r[]
-        byte[] decodeHex2 = Hex.decodeHex(hexString.toCharArray());
-        System.out.println(new String(decodeHex2));
-        //第二种方式：char数组型的
-        byte[] decodeHex = Hex.decodeHex(encodeHex);
-        System.out.println(new String(decodeHex));
+        try {
+            byte[] decodeHex2 = Hex.decodeHex(hexString.toCharArray());
+            System.out.println(new String(decodeHex2));
+            //第二种方式：char数组型的
+            byte[] decodeHex = Hex.decodeHex(encodeHex);
+            System.out.println(new String(decodeHex));
+        } catch (DecoderException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

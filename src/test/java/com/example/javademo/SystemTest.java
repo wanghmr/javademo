@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
  * @date 2020/7/1
  * Description: System.arraycopy
  */
-public class SystemTest {
+class SystemTest {
 
     @Test
     void contextLoads() {
