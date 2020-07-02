@@ -8,10 +8,13 @@ import org.junit.jupiter.api.Test;
 /**
  * @author wh
  * @date 2020/7/1
- * Description: System.arraycopy
+ * Description: System类的用法
  */
 class SystemTest {
 
+    /**
+     * System.arraycopy
+     */
     @Test
     void contextLoads() {
         //初始化对象数组 
