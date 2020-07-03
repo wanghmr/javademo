@@ -1,4 +1,4 @@
-package main.java;
+package com.example;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 /**
  * @author wh
  * @date 2020/5/21
- * Description:
+ * Description:java8 新特性Stream
  */
 public class StreamTest {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package threadExecutor;
+package com.threadexecutor;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
