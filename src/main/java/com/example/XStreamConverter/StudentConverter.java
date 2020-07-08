@@ -10,10 +10,17 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 /**
  * @author wh
  * @date 2020/7/8
- * Description:
+ * Description: XStream自定义转换器
  */
 public class StudentConverter implements Converter {
 
+    /**
+     * 序列化对象到XML。
+     *
+     * @param value
+     * @param writer
+     * @param context
+     */
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer,
                         MarshallingContext context) {
@@ -24,6 +31,14 @@ public class StudentConverter implements Converter {
         writer.endNode();
     }
 
+
+    /**
+     * 从XML对象反序列化
+     *
+     * @param reader
+     * @param context
+     * @return
+     */
     @Override
     public Object unmarshal(HierarchicalStreamReader reader,
                             UnmarshallingContext context) {
@@ -34,6 +49,12 @@ public class StudentConverter implements Converter {
         return student;
     }
 
+    /**
+     * 检查支持的对象类型的序列化。
+     *
+     * @param object
+     * @return
+     */
     @Override
     public boolean canConvert(Class object) {
         return object.equals(Student.class);
