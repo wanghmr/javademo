@@ -25,6 +25,9 @@ public class XStreamTester {
         //为了告诉XStream框架来处理注释，需要XML序列化之前添加下面的命令。二选一
         xstream.autodetectAnnotations(true);
 //        xstream.processAnnotations(Student.class);
+        //忽略未知字段
+        xstream.ignoreUnknownElements();
+
         // 注册转换器
         xstream.registerConverter(new StudentConverter());
         // Object to XML Conversion
