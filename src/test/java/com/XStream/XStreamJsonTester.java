@@ -16,7 +16,7 @@ import java.io.Writer;
  */
 public class XStreamJsonTester {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         Student student = new Student("Mahesh", "Parashar");
 
         XStream xstream = new XStream(new JsonHierarchicalStreamDriver() {
@@ -33,10 +33,10 @@ public class XStreamJsonTester {
 @XStreamAlias("student")
 class Student {
 
-    public String firstName;
-    public String lastName;
+    private String firstName;
+    private String lastName;
 
-    public Student(String firstName, String lastName) {
+    Student(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
