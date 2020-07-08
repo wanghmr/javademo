@@ -1,4 +1,4 @@
-package com.example;
+package com.Json;
 
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
