@@ -11,10 +11,10 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * Description: Java对象和xml文档相互转换
  */
 public class XStreamTester {
+
     public static void main(String[] args) {
-        XStreamTester tester = new XStreamTester();
         //获取一个学生实例对象
-        Student student = tester.getStudentDetails();
+        Student student = new Student("中国", "世界");
 
         //1.创建XStream 对象
         XStream xstream = new XStream(new StaxDriver());
@@ -32,9 +32,6 @@ public class XStreamTester {
         System.out.println("对象转化为xml："+xml);
         Student student02 = (Student) xstream.fromXML(xml);
         System.out.println("xml转化为对象："+student02.toString());
-    }
-    private Student getStudentDetails() {
-        return new Student("中国", "世界");
     }
 
 }
