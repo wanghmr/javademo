@@ -1,12 +1,8 @@
 package com.XStream;
 
+import com.example.XStreamConverter.StudentConverter;
+import com.example.pojo.Student;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 /**
@@ -37,73 +33,10 @@ public class XStreamTester {
         Student student02 = (Student) xstream.fromXML(xml);
         System.out.println("xml转化为对象："+student02.toString());
     }
-
     private Student getStudentDetails() {
         return new Student("中国", "世界");
     }
 
 }
 
-@XStreamAlias("student")
-class Student {
 
-    @XStreamAlias("name")
-    private Name studentName;
-
-    Student(String firstName, String lastName) {
-        this.studentName = new Name(firstName, lastName);
-    }
-
-    Name getName() {
-        return studentName;
-    }
-
-    @Override
-    public String toString() {
-        return "Student{"+studentName.getFirstName()+","+studentName.getLastName()+"}";
-    }
-}
-
-class Name {
-    private String firstName;
-    private String lastName;
-
-    Name(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
-    String getFirstName() {
-        return firstName;
-    }
-
-    String getLastName() {
-        return lastName;
-    }
-
-}
-
-class StudentConverter implements Converter {
-
-    public void marshal(Object value, HierarchicalStreamWriter writer,
-                        MarshallingContext context) {
-        Student student = (Student) value;
-        writer.startNode("name");
-        writer.setValue(student.getName().getFirstName() + ","
-                + student.getName().getLastName());
-        writer.endNode();
-    }
-
-    public Object unmarshal(HierarchicalStreamReader reader,
-                            UnmarshallingContext context) {
-        reader.moveDown();
-        String[] nameparts = reader.getValue().split(",");
-        Student student = new Student(nameparts[0], nameparts[1]);
-        reader.moveUp();
-        return student;
-    }
-
-    public boolean canConvert(Class object) {
-        return object.equals(Student.class);
-    }
-}
