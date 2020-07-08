@@ -13,12 +13,12 @@ public class Student {
     @XStreamAlias("name")
     private Name studentName;
 
-    public Student(String firstName, String lastName) {
-        this.studentName = new Name(firstName, lastName);
-    }
-
     public Name getName() {
         return studentName;
+    }
+
+    public Student(String firstName, String lastName) {
+        this.studentName = new Name(firstName, lastName);
     }
 
     @Override
