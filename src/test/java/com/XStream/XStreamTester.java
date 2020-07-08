@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * Description: Java对象和xml文档相互转换
  */
 public class XStreamTester {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         XStreamTester tester = new XStreamTester();
         //获取一个学生实例对象
         Student student = tester.getStudentDetails();
@@ -33,8 +33,7 @@ public class XStreamTester {
     }
 
     private Student getStudentDetails() {
-        Student student = new Student("Mahesh", "Parashar");
-        return student;
+        return new Student("Mahesh", "Parashar");
     }
 
 }
@@ -45,11 +44,11 @@ class Student {
     @XStreamAlias("name")
     private Name studentName;
 
-    public Student(String firstName, String lastName) {
+    Student(String firstName, String lastName) {
         this.studentName = new Name(firstName, lastName);
     }
 
-    public Name getName() {
+    Name getName() {
         return studentName;
     }
 }
@@ -58,16 +57,16 @@ class Name {
     private String firstName;
     private String lastName;
 
-    public Name(String firstName, String lastName) {
+    Name(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    public String getFirstName() {
+    String getFirstName() {
         return firstName;
     }
 
-    public String getLastName() {
+    String getLastName() {
         return lastName;
     }
 }
