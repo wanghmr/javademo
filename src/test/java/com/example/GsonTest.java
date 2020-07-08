@@ -13,12 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
  * Description:Gson的用法
  */
 @SpringBootTest
-public class GsonTest {
+class GsonTest {
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    class User {
+    private class User {
         private Integer id;
         private String username;
         private String email;
@@ -33,13 +33,20 @@ public class GsonTest {
     void gsonTest01() {
         Gson gson = new Gson();
         int i = gson.fromJson("100", int.class); //100
+        System.out.println(i);
         double d = gson.fromJson("\"99.99\"", double.class);  //99.99
+        System.out.println(d);
         boolean b = gson.fromJson("true", boolean.class);     // true
+        System.out.println(b);
         String str = gson.fromJson("String", String.class);   // String
+        System.out.println(str);
 
         String jsonNumber = gson.toJson(100);       // 100
+        System.out.println(jsonNumber);
         String jsonBoolean = gson.toJson(false);    // false
+        System.out.println(jsonBoolean);
         String jsonString = gson.toJson("String"); //"String"
+        System.out.println(jsonString);
     }
 
     /**
@@ -65,8 +72,12 @@ public class GsonTest {
     void gsonTest04() {
         Gson gson = new Gson();
         int i = gson.fromJson("100", int.class); //100
+        System.out.println(i);
         double d = gson.fromJson("\"99.99\"", double.class);  //99.99
+        System.out.println(d);
         boolean b = gson.fromJson("true", boolean.class);     // true
+        System.out.println(b);
         String str = gson.fromJson("String", String.class);   // String
+        System.out.println(str);
     }
 }
