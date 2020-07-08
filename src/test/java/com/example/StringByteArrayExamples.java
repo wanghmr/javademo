@@ -24,7 +24,7 @@ class StringByteArrayExamples {
         System.out.println("Decoded String : " + s);
 
         byte[] stringBytes = string.getBytes(StandardCharsets.UTF_8);
-        String s2 = new String(stringBytes);
+        String s2 = new String(stringBytes,StandardCharsets.UTF_8);
         System.out.println("Decoded String(utf-8) :" + s2);
 
 
