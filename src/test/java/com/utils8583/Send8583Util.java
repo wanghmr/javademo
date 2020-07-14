@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -47,25 +48,24 @@ import java.util.*;
 public class Send8583Util {
     private static final Logger log = LoggerFactory.getLogger(Send8583Util.class);
     //报文编码 UTF-8 GBK
-    public static String default_encoding = CharEncoding.UTF_8;
+    private static String default_encoding = CharEncoding.UTF_8;
 
     /**
      * @param args
      */
     public static void main(String[] args) throws Exception {
         try {
-            System.out.println("=====================方式一：通过数据Map组装8583报文和解析报文");
-//            String basepath = Send8583Util.class.getClassLoader().getResource("").getPath();
-//            String path = basepath + "config_8583.properties";
-            String path =  ResourceUtils.getFile("classpath:config_8583.properties").getPath();
+            String path = ResourceUtils.getFile("classpath:config_8583.properties").getPath();
+            //读取报文定义器 {"FIELD033":"string,VAR2,content","FIELD001":"string,16,flow_no","FIELD008":"string,32,acc_no","FIELD002":"string,16,card_no","FIELD013":"string,10,trad_time","FIELD003":"string,4,trad_code","FIELD036":"string,VAR3,remark"}
             Map config8583Map = get8583Config(path);
-            System.out.println("初始内容报文：" + JSONObject.toJSONString(config8583Map));
+            System.out.println("报文定义器：" + JSONObject.toJSONString(config8583Map));
 
 
             // =====================方式二：通过数据Map组装8583报文和解析报文
             System.out.println("=====================方式二：通过数据Map组装8583报文和解析报文");
             //***********************组装8583报文测试--start***********************//
-            Map dataMap = new HashMap();//报文域
+            //报文域
+            Map dataMap = new HashMap();
             dataMap.put("flow_no", System.currentTimeMillis());
             dataMap.put("trad_code", "1799");//交易码
             dataMap.put("acc_no", "12345678901");//账号
@@ -82,6 +82,7 @@ public class Send8583Util {
             Map map = analyze8583(message, config8583Map);
             System.out.println("完成解析8583报文：" + map.toString());
             //***********************解析8583报文测试--end***********************//
+
 
             // =====================方式三：通过域字段Map组装8583报文和解析报文
             System.out.println();
@@ -107,16 +108,6 @@ public class Send8583Util {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-    }
-
-    // 8583报文初始位图:128位01字符串
-    public static String getInitBitMap() {
-        String initBitMap =
-                "00000000" + "00000000" + "00000000" + "00000000"
-                        + "00000000" + "00000000" + "00000000" + "00000000"
-                        + "00000000" + "00000000" + "00000000" + "00000000"
-                        + "00000000" + "00000000" + "00000000" + "00000000";
-        return initBitMap;
     }
 
     /**
@@ -193,8 +184,8 @@ public class Send8583Util {
      *
      * @param dataMap       数据Map
      * @param config8583Map 8583报文定义器 "FIELD013" -> "string,10,trad_time"
-     * @return
-     * @throws Exception
+     * @return 组装报文
+     * @throws Exception 异常
      */
     public static String package8583(Map dataMap, Map config8583Map) throws Exception {
         if (dataMap == null) {
@@ -203,11 +194,13 @@ public class Send8583Util {
         if (config8583Map == null) {
             return null;
         }
+
         // 从8583报文定义器中获取属性名与域字段名对应的Map "trad_time" -> "FIELD013"
         Map attributeMap = getAttributeMap(config8583Map);
         if (attributeMap == null || attributeMap.size() == 0) {
             return null;
         }
+
         // 待组装的报文  "FIELD013" -> "2013-11-06"
         TreeMap fieldMap = new TreeMap<>();
         try {
@@ -225,10 +218,12 @@ public class Send8583Util {
                     }
                 }
             }
+
             if (fieldMap.size() > 0) {
                 // 组装8583报文
                 byte[] send = make8583(fieldMap, config8583Map);
-                return Base64Util.encode(new String(send, CharEncoding.ISO_8859_1), CharEncoding.UTF_8);
+                //base64编码
+                return Base64Util.encode(new String(send, StandardCharsets.ISO_8859_1), CharEncoding.UTF_8);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -287,18 +282,23 @@ public class Send8583Util {
     /**
      * 组装8583报文
      *
-     * @param filedMap      域字段名与属性值的Map
-     * @param config8583Map 8583定义器
-     * @return
+     * @param filedMap      域字段名与属性值的Map  "FIELD013" -> "2013-11-06"
+     * @param config8583Map 8583报文定义器 "FIELD013" -> "string,10,trad_time"
+     * @return 组装8583报文
      */
     public static byte[] make8583(TreeMap filedMap, Map config8583Map) {
-        byte[] whoe8583 = null;
         if (filedMap == null) {
             return null;
         }
+
+        byte[] whoe8583 = null;
         try {
             //获取初始化的128位图
-            String bitMap128 = getInitBitMap();
+            // 8583报文初始位图:128位01字符串
+            String bitMap128 = "00000000" + "00000000" + "00000000" + "00000000"
+                    + "00000000" + "00000000" + "00000000" + "00000000"
+                    + "00000000" + "00000000" + "00000000" + "00000000"
+                    + "00000000" + "00000000" + "00000000" + "00000000";
             // 按照8583定义器格式化各个域的内容
             Map all = formatValueTo8583(filedMap, bitMap128, config8583Map);
             // 获取上送报文内容
@@ -323,7 +323,7 @@ public class Send8583Util {
         try {
             String bitMap128 = (String) all.get("bitMap128");
             System.out.println("组装位图：" + bitMap128);
-            // 128域位图二进制字符串转16位16进制
+            // 128域位图二进制字符串转16位的16进制形式
             byte[] bitmaps = get16BitByteFromStr(bitMap128);
             log.info("组装位图：{}", bitMap128);
 
@@ -335,10 +335,12 @@ public class Send8583Util {
                 String value = (String) pacBody.get(key);
                 last128.append(value);
             }
-            byte[] bitContent = last128.toString().getBytes(default_encoding);//域值
-            //System.out.println("数据："+last128.toString()+"---"+last128.length());
+            //域值
+            byte[] bitContent = last128.toString().getBytes(default_encoding);
+            System.out.println("数据："+last128.toString()+"---"+last128.length());
             //组装
             byte[] package8583 = null;
+            //bitmaps位图，bitContent数据
             package8583 = Send8583Util.arrayApend(package8583, bitmaps);
             package8583 = Send8583Util.arrayApend(package8583, bitContent);
             return package8583;
@@ -351,19 +353,21 @@ public class Send8583Util {
     /**
      * 按照8583定义器格式化各个域的内容
      *
-     * @param filedMap      域字段名与属性值的Map
+     * @param filedMap      域字段名与属性值的Map  "FIELD013" -> "2013-11-06"
+     * @param config8583Map 8583报文定义器 "FIELD013" -> "string,10,trad_time"
      * @param bitMap128     128位图
-     * @param config8583Map 8583定义器
      * @return
      */
     public static Map formatValueTo8583(TreeMap filedMap, String bitMap128, Map config8583Map) {
-
-        TreeMap formatedFiledMap = new TreeMap();//格式化结果
+        //格式化结果，例如：定长域的值不够长度则补等
+        TreeMap formatedFiledMap = new TreeMap();
         if (filedMap != null) {
             Iterator it = filedMap.keySet().iterator();
             for (; it.hasNext(); ) {
-                String fieldName = (String) it.next();//例如FIELD005
-                String fieldValue = String.valueOf(filedMap.get(fieldName));//字段值
+                //域字段名，例如FIELD013
+                String fieldName = (String) it.next();
+                //字段值
+                String fieldValue = String.valueOf(filedMap.get(fieldName));
                 try {
                     if (fieldValue == null) {
                         log.error("error:报文域 {}为空值", fieldName);
@@ -373,20 +377,27 @@ public class Send8583Util {
                     fieldValue = new String(fieldValue.getBytes(default_encoding), default_encoding);
 
                     // 数据域名称FIELD开头的为128域
-                    if (fieldName.startsWith("FIELD") && fieldValue.length() >= 0) {
-                        String fieldNo = fieldName.substring(5, 8);//例如005
-                        // 组二进制位图串（该域字段存在时更新128位图）
-                        bitMap128 = change16bitMapFlag(fieldNo, bitMap128);
+                    if (fieldName.startsWith("FIELD")) {
+                        //例如013
+                        String fieldNo = fieldName.substring(5, 8);
+                        // 组二进制位图串（该域字段存在时更新128位图），改变128位图中的标志为1
+                        int indexNo = Integer.parseInt(fieldNo);
+                        bitMap128 = bitMap128.substring(0, indexNo - 1) + "1" + bitMap128.substring(indexNo);
 
                         // 获取域定义信息
                         String[] fieldDef = config8583Map.get("FIELD" + fieldNo).toString().split(",");
-                        String defType = fieldDef[0];//类型定义例string
-                        String defLen = fieldDef[1];//长度定义,例20
-                        boolean isFixLen = true;//是否定长判断
+                        //类型定义例string
+                        String defType = fieldDef[0];
+                        //长度定义,例20
+                        String defLen = fieldDef[1];
 
-                        if (defLen.startsWith("VAR")) {//变长域
+                        //是否定长判断
+                        boolean isFixLen = true;
+                        //变长域
+                        if (defLen.startsWith("VAR")) {
                             isFixLen = false;
-                            defLen = defLen.substring(3);//获取VAR后面的数字
+                            //获取VAR后面的数字
+                            defLen = defLen.substring(3);
                         }
                         // 字段值得实际长度（UTF-8下的字节长度）
                         int fieldLen = fieldValue.getBytes(default_encoding).length;
@@ -412,7 +423,8 @@ public class Send8583Util {
                                 log.error("error:字段{}的数据定义长度为{}位,长度不能超过{}", fieldName, fieldLen, defLen2);
                                 return null;
                             } else {
-                                fieldValue = getFixFieldValue(fieldValue, defLen2);//定长处理
+                                //定长处理
+                                fieldValue = getFixFieldValue(fieldValue, defLen2);
                             }
                         }
                         log.info("组装后报文域 {}=={}==,域长度:{}", fieldName, fieldValue, fieldValue.getBytes(default_encoding).length);
@@ -574,9 +586,9 @@ public class Send8583Util {
     /**
      * 返回a和b的组合,实现累加功能
      *
-     * @param a
-     * @param b
-     * @return
+     * @param a 组装的数据
+     * @param b 被组装的数据
+     * @return 组装的数据
      */
     public static byte[] arrayApend(byte[] a, byte[] b) {
         int a_len = (a == null ? 0 : a.length);
@@ -594,21 +606,6 @@ public class Send8583Util {
         }
         return c;
     }
-
-
-    /**
-     * 改变128位图中的标志为1
-     *
-     * @param fieldNo
-     * @param res
-     * @return
-     */
-    public static String change16bitMapFlag(String fieldNo, String res) {
-        int indexNo = Integer.parseInt(fieldNo);
-        res = res.substring(0, indexNo - 1) + "1" + res.substring(indexNo);
-        return res;
-    }
-
 
     /**
      * 位图操作
@@ -649,7 +646,8 @@ public class Send8583Util {
             }
             // 128域位图二进制字符串转16位16进制
             byte[] tmp = str_128.getBytes(default_encoding);
-            int weight;//权重
+            //权重
+            int weight;
             byte[] strout = new byte[128];
             int i, j, w = 0;
             for (i = 0; i < 16; i++) {
@@ -802,8 +800,8 @@ public class Send8583Util {
     /**
      * 获取8583报文定义器中属性名与域字段名的Map
      *
-     * @param config8583Map
-     * @return
+     * @param config8583Map 8583报文定义器 "FIELD013" -> "string,10,trad_time"
+     * @return "FIELD013" -> "string,10,trad_time"
      */
     public static Map<String, String> getAttributeMap(Map config8583Map) {
         Map<String, String> map = new HashMap<>();
