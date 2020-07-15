@@ -3,6 +3,7 @@ package com.socket;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author wh
@@ -18,12 +19,13 @@ public class SocketClient {
         InputStream in = client.getInputStream();
         OutputStream out = client.getOutputStream();
 
-        out.write("hello, server".getBytes());
+        out.write("hello, server".getBytes(StandardCharsets.UTF_8));
         client.shutdownOutput();
 
         byte[] b = new byte[1024];
-        while(-1 != in.read(b)) {
-            System.out.println(new String(b));
+        int len;
+        while(-1 != (len=in.read(b))) {
+            System.out.println(new String(b,0,len,StandardCharsets.UTF_8));
         }
 
         System.out.println("Client close. " + System.currentTimeMillis());

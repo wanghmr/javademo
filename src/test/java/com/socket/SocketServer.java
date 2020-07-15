@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author wh
@@ -17,15 +18,20 @@ public class SocketServer {
 
         // 服务端阻塞式监听客户端连接请求
         // 接收到连接请求，则创建一个socket实例，与客户端通信
+        System.out.println("server将一直等待连接的到来");
         Socket client = server.accept();
 
-        // 获取InputStream读取数据
+        // 获取InputStream读取数据,并建立缓冲区就行读取
         InputStream in = client.getInputStream();
-        byte[] b = new byte[1024];
+        byte[] bytes = new byte[1024];
+        int len;
+        StringBuilder sb = new StringBuilder();
         // 客户端关闭输出流后服务端会读取到-1标志
-        while(-1 != in.read(b)) {
-            System.out.println(new String(b));
+        while ((len = in.read(bytes)) != -1) {
+            System.out.println("len:"+len);
+            sb.append(new String(bytes, 0, len, StandardCharsets.UTF_8));
         }
+        System.out.println("get message from client: " + sb);
 
         // 获取OutputStream输出数据
         OutputStream out = client.getOutputStream();
