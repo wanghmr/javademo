@@ -8,7 +8,7 @@ import java.net.Socket;
 /**
  * @author wh
  * @date 2020/7/15
- * Description: socket服务端
+ * Description: socket服务端（先起服务端，后起客户端）
  */
 public class SocketServer {
     public static void main(String[] args) throws Exception {
