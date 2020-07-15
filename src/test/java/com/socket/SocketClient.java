@@ -22,8 +22,7 @@ public class SocketClient {
         client.shutdownOutput();
 
         byte[] b = new byte[1024];
-        while(-1 != in.read(b))
-        {
+        while(-1 != in.read(b)) {
             System.out.println(new String(b));
         }
 

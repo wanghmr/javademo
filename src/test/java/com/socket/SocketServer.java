@@ -23,8 +23,7 @@ public class SocketServer {
         InputStream in = client.getInputStream();
         byte[] b = new byte[1024];
         // 客户端关闭输出流后服务端会读取到-1标志
-        while(-1 != in.read(b))
-        {
+        while(-1 != in.read(b)) {
             System.out.println(new String(b));
         }
 
