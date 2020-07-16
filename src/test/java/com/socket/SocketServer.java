@@ -29,9 +29,10 @@ public class SocketServer {
         // 客户端关闭输出流后服务端会读取到-1标志
         while ((len = in.read(bytes)) != -1) {
             System.out.println("len:"+len);
+            System.out.println(new String(bytes));
             sb.append(new String(bytes, 0, len, StandardCharsets.UTF_8));
         }
-        System.out.println("get message from client: " + sb);
+        System.out.println("get message from client: " + sb.toString());
 
         // 获取OutputStream输出数据
         OutputStream out = client.getOutputStream();
