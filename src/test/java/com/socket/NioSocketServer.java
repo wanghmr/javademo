@@ -49,7 +49,7 @@ public class NioSocketServer {
                 if (selectionKey.isAcceptable()){
                     //该客户端生成了一个socketChannel
                     SocketChannel socketChannel = serverSocketChannel.accept();
-                    System.out.println("客户端连接成功");
+                    System.out.println("客户端连接成功"+socketChannel.hashCode());
                     //将socketChannel 设置为非阻塞
                     socketChannel.configureBlocking(false);
                     //将socketChannel 注册到selector,关注事件OP_READ，同时关联一个buff
